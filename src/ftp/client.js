@@ -2,7 +2,6 @@
 const ftp = require('basic-ftp')
 const config = require('../common/config.json')
 
-
 class FtpFileTransferClient{
 
     client
@@ -32,6 +31,12 @@ class FtpFileTransferClient{
                 await this.connect()
             }
         }
+    }
+
+    async getFileList(dir){
+        await this.connect()
+        return await this.client.list(dir);
+
     }
 
     async getFile(dir,fileName){
