@@ -1,18 +1,20 @@
 
 const ftp = require('basic-ftp')
-const config = require('../common/config.json')
+// const config = require('../../common/config.json')
+import * as config from '../../common/config.json'
 
-class FtpFileTransferClient{
+export default class FtpFileTransferClient{
 
     client
     serverIP
     serverPort
-    isConnecting = false
+    isConnecting
     constructor(serverIP,serverPort = config.ftp.serverDefaultPort){
         this.client = new ftp.Client()
         this.client.ftp.verbose = true
         this.serverPort = serverPort
         this.serverIP = serverIP
+        this.isConnecting = false
     }
 
     async connect(username = "anonymous", password = "", secure = false){
@@ -26,18 +28,27 @@ class FtpFileTransferClient{
                     secure: false
                 })
                 this.isConnecting = false
+                
             }else{
                 await new Promise(resolve => setTimeout(resolve,100))
                 await this.connect()
             }
+            // await this.client.access({
+            //     host: this.serverIP,
+            //     user: username,
+            //     password: password,
+            //     secure: false
+            // })
         }
     }
 
     async getFileList(dir){
         await this.connect()
-        return await this.client.list(dir);
-
+        let result = await this.client.list(dir);
+        console.log(JSON.stringify(result));
+        return result
     }
+
 
     async getFile(dir,fileName){
         await this.connect()

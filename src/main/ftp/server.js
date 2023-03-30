@@ -1,7 +1,8 @@
 const FtpSrv = require('ftp-srv')
-const config = require('../common/config.json')
+// const config = require('../common/config.json')
+import * as config from '../../common/config.json'
 
-class FtpFileTransferServer{
+export default class FtpFileTransferServer{
 
     ftpServer
     constructor(ip = config["ftp"]["serverDefaultIP"],port = config.ftp.serverDefaultPort){
