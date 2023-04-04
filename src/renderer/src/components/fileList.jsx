@@ -5,10 +5,10 @@ import { useState, useEffect } from "react";
 export const FileList = (props) => {
   const [files, setFiles] = useState([]);
   const [currentDirectory, setCurrentDirectory] = useState("./");
-  useEffect(updateFileList, [props.connected, currentDirectory]);
-
+  useEffect(resetDirectory,[props.serverIP]) //reset dir when server ip change (new connection)
+  useEffect(updateFileList, [currentDirectory]);
   function updateFileList() {
-    if (props.connected) {
+    // if (props.serverIP){
       ftp
         .getFileList(currentDirectory)
         .then((result) => {
@@ -17,7 +17,12 @@ export const FileList = (props) => {
           setFiles(result);
         })
         .catch((err) => console.log(err));
-    }
+    // }
+  }
+ 
+  function resetDirectory(){
+    setCurrentDirectory("./")
+    
   }
 
   const updateCurrentDirectory = (subdir) => {
@@ -31,6 +36,9 @@ export const FileList = (props) => {
   };
 
   return (
+    <div className="col-5">
+            <h3 className="mb-3">Files and Directories</h3>
+            <span>Current Directory: {currentDirectory}</span>
     <ul className="list-group">
       {files.map((element) => (
         <FileItem
@@ -39,9 +47,11 @@ export const FileList = (props) => {
           key={element.name}
           updateCurrentDirectory={updateCurrentDirectory}
           dir={currentDirectory}
+          informDownload={props.informDownload}
         />
         // type 1 means file, type 2 means folder
       ))}
     </ul>
+    </div>
   );
 };

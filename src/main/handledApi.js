@@ -1,5 +1,7 @@
 const { dialog } = require("electron");
 import FtpFileTransferClient from "./ftp/client";
+import * as config from '../common/config.json'
+const fs = require('fs')
 export default function addIPCHandler(ipcMain) {
   ipcMain.handle("ftpClient:getFile", async (event, fileDir, fileName) => {
     try {
@@ -32,6 +34,20 @@ export default function addIPCHandler(ipcMain) {
   //     handleError(err)
   //   }
   // })
+
+  ipcMain.handle("localFs:downloadedFileList",async (event)=>{
+
+    //create a promise and await for it. any better way of doing it?
+    return await new Promise((resolve, reject) => {
+      fs.readdir(config.ftp.downloadDir, (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files);
+        }
+      });
+    });
+  })
 }
 
 function handleError(error) {

@@ -30,9 +30,16 @@ if (process.contextIsolated) {
         ipcRenderer.invoke("ftpClient:createNew", serverIP),
       getFile: (fileDir, fileName) =>
         ipcRenderer.invoke("ftpClient:getFile", fileDir, fileName),
-      getFileList: (dir) => ipcRenderer.invoke("ftpClient:getFileList", dir),
-      changeDirectory: (subDir) => ipcRenderer.invoke("ftpClient:cd", subDir),
+      getFileList: (dir) => {
+        console.log('getting file list');
+        return ipcRenderer.invoke("ftpClient:getFileList", dir)},
+      // changeDirectory: (subDir) => ipcRenderer.invoke("ftpClient:cd", subDir),
     });
+
+    contextBridge.exposeInMainWorld("local",{
+      getReceivedFiles:()=>ipcRenderer.invoke("localFs:downloadedFileList")
+      
+    })
   } catch (error) {
     console.error(error);
   }

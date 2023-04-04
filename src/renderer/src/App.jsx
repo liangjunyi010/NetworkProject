@@ -1,22 +1,21 @@
 import React from "react";
 import { ConnectionInput } from "./components/connectionInput";
 import { FileList } from "./components/fileList";
+import { ReceivedFileList } from "./components/receivedFileList";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       serverIP: "",
-      // files: [],
-      currentDirectory: "",
-      connected: false,
+      downloadCounter:0
     };
   }
 
-  connectServer = async (serverIP) => {
+  connectServer = async (newServerIP) => {
     try {
-      ftp.createClient(serverIP).then(() => {
+      ftp.createClient(newServerIP).then(() => {
         this.setState(() => {
-          return { connected: true };
+          return { serverIP: newServerIP };
         });
       });
     } catch (err) {
@@ -24,32 +23,23 @@ export default class App extends React.Component {
     }
   };
 
-  // onServerIPInputChange(event){
-  //     this.setState(()=>{
-  //         return {serverIP:event.target.value}
-  //     },
-  //     ()=>{
-  //         console.log("new serverIP state value: "+this.state.serverIP)
-  //     })
-  // }
-  onServerIPInputChange = (event) => {
-    this.setState(
-      () => {
-        return { serverIP: event.target.value };
-      },
-      () => {
-        console.log("new serverIP state value: " + this.state.serverIP);
-      }
-    );
-  };
+  informDownload = ()=>{
+    this.setState(()=>{return {downloadCounter:this.state.downloadCounter+1}},()=>console.log(this.state.downloadCounter))
+  }
 
   render() {
     return (
       <div className="container mt-5">
-        <h1 class="text-center mb-4">Server Connection</h1>
+        <h2 className="text-center mb-4">Server Connection</h2>
         <ConnectionInput connectServer={this.connectServer} />
-        <h2 class="mb-3">Files and Directories</h2>
-        <FileList connected={this.state.connected} />
+        <div className="row">
+          
+            <FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>
+  
+          <div className="col-2"></div>
+          
+            <ReceivedFileList downloadCounter={this.state.downloadCounter}/>
+        </div>
       </div>
     );
   }
