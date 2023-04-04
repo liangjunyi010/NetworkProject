@@ -45,8 +45,10 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="container mt-5">
+        <h1 class="text-center mb-4">Server Connection</h1>
         <ConnectionInput connectServer={this.connectServer} />
+        <h2 class="mb-3">Files and Directories</h2>
         <FileList connected={this.state.connected} />
       </div>
     );

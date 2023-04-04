@@ -1,3 +1,4 @@
+
 export const FileItem = (props) => {
   let onClickHandler = () => {
     if (props.type === 1) {
@@ -7,8 +8,9 @@ export const FileItem = (props) => {
     }
   };
   return (
-    <div className="row" onClick={onClickHandler}>
-      <p>{props.fileName}</p>
-    </div>
+    <li className="list-group-item d-flex align-items-center" onClick={onClickHandler}>
+      {props.type===1 ? <i class="bi bi-file-earmark me-2"></i> : <i class="bi bi-folder me-2"></i>}
+      <span>{props.fileName}</span>
+    </li>
   );
 };

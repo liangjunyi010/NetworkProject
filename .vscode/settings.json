@@ -7,5 +7,7 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "terminal.integrated.commandsToSkipShell": ["paste"],
+  "terminal.integrated.rightClickBehavior": "paste"
 }

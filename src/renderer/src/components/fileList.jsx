@@ -31,7 +31,7 @@ export const FileList = (props) => {
   };
 
   return (
-    <ul>
+    <ul className="list-group">
       {files.map((element) => (
         <FileItem
           fileName={element.name}

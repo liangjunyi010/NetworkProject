@@ -7,20 +7,27 @@ export const ConnectionInput = ({ connectServer }) => {
   };
 
   return (
-    <div className={"row"}>
-      <label htmlFor={"server-ip"}>The server IP: </label>
-      <input
-        type="text"
-        id="server-ip"
-        name={"server-ip"}
-        onChange={onInputChange}
-      />
-      <button
-        className="btn btn-primary"
-        onClick={() => connectServer(serverIP)}
-      >
-        Connect
-      </button>
+    <div className="row mb-3">
+      <div className="col-4">
+
+        <label htmlFor={"server-ip"} className='form-label'>Server IP: </label>
+        <input
+          type="text"
+          id="server-ip"
+          name={"server-ip"}
+          onChange={onInputChange}
+          className={'form-control'}
+        />
+      </div>
+      <div className="col-2 d-flex align-items-end"> 
+
+        <button
+          className="btn btn-primary w-100"
+          onClick={() => connectServer(serverIP)}
+        >
+          Connect
+        </button>
+      </div>
     </div>
   );
 };
