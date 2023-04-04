@@ -1,6 +1,6 @@
-# electron-app
+# Quick Share
 
-An Electron application with React
+A file transfer application, built with Electron & React.
 
 ## Recommended IDE Setup
 
@@ -12,6 +12,12 @@ An Electron application with React
 
 ```bash
 $ npm install
+```
+
+### Run
+
+```bash
+$ npm start
 ```
 
 ### Development
@@ -31,4 +37,10 @@ $ npm run build:mac
 
 # For Linux
 $ npm run build:linux
+```
+
+### Start FTP server
+
+```bash
+$ sudo node ./test/startFtpServer.js
 ```
