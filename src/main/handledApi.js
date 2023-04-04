@@ -1,34 +1,42 @@
-const { dialog } = require('electron')
-import FtpFileTransferClient from './ftp/client'
-export default function addIPCHandler(ipcMain){
-    ipcMain.handle('ftpClient:getFile',async (event,fileDir,fileName)=>{
-        try{
-          await ftpClient.getFile(fileDir,fileName)
-          return true
-        }catch (err){
-          handleError(err)
-        }
-      }
-      )
-    
-    ipcMain.handle('ftpClient:getFileList',async (event,fileDir)=>{
-        try{
-            return await ftpClient.getFileList(fileDir)
-        }catch (err){
-            handleError(err)
-        }
-    })
+const { dialog } = require("electron");
+import FtpFileTransferClient from "./ftp/client";
+export default function addIPCHandler(ipcMain) {
+  ipcMain.handle("ftpClient:getFile", async (event, fileDir, fileName) => {
+    try {
+      await ftpClient.getFile(fileDir, fileName);
+      return true;
+    } catch (err) {
+      handleError(err);
+    }
+  });
 
-    ipcMain.handle("ftpClient:createNew", (event,serverIP)=>{
-      ftpClient = new FtpFileTransferClient(serverIP)
-      return true
-    })
+  ipcMain.handle("ftpClient:getFileList", async (event, fileDir) => {
+    try {
+      return await ftpClient.getFileList(fileDir);
+    } catch (err) {
+      handleError(err);
+    }
+  });
+
+  ipcMain.handle("ftpClient:createNew", (event, serverIP) => {
+    if (serverIP !== ftpClient.serverIP) {
+      ftpClient = new FtpFileTransferClient(serverIP);
+    }
+    return true;
+  });
+
+  // ipcMain.handle("ftpClient:cd",async (event,subDir)=>{
+  //   try{
+  //     return await ftpClient.cd(subDir)
+  //   } catch (err){
+  //     handleError(err)
+  //   }
+  // })
 }
 
-function handleError(error){
-    // dialog.showErrorBox(error.name,error.message+'\n'+error.stack)
-    throw error
+function handleError(error) {
+  // dialog.showErrorBox(error.name,error.message+'\n'+error.stack)
+  throw error;
 }
 
-let ftpClient
-
+let ftpClient = new FtpFileTransferClient("");

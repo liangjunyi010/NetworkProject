@@ -1,13 +1,15 @@
-import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import react from '@vitejs/plugin-react'
-import requirePlugin from 'vite-plugin-require'
+import { resolve } from "path";
+import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import react from "@vitejs/plugin-react";
+import requirePlugin from "vite-plugin-require";
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
-  plugins:[requirePlugin({
-    // options
-  })],
+  plugins: [
+    requirePlugin({
+      // options
+    }),
+  ],
   main: {
     plugins: [externalizeDepsPlugin()],
   },
@@ -17,10 +19,9 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
-      }
+        "@renderer": resolve("src/renderer/src"),
+      },
     },
-    plugins: [react()]
+    plugins: [react()],
   },
-
-})
+});

@@ -1,39 +1,42 @@
-import { electronAPI } from '@electron-toolkit/preload'
-const { contextBridge,ipcRenderer } = require('electron')
+import { electronAPI } from "@electron-toolkit/preload";
+const { contextBridge, ipcRenderer } = require("electron");
 // const f = require('./test')
 // import {f} from './test'
 // const FtpFileTransferClient = require('./ftp/client')
-import FtpFileTransferClient from '../main/ftp/client'
+import FtpFileTransferClient from "../main/ftp/client";
 // const FtpFileTransferServer = require('./ftp/server')
-import FtpFileTransferServer from '../main/ftp/server'
+// import FtpFileTransferServer from "../main/ftp/server";
 
 // Custom APIs for renderer
-const api = {}
+const api = {};
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', api)
-    contextBridge.exposeInMainWorld('versions', {
+    contextBridge.exposeInMainWorld("electron", electronAPI);
+    contextBridge.exposeInMainWorld("api", api);
+    contextBridge.exposeInMainWorld("versions", {
       node: () => process.versions.node,
       chrome: () => process.versions.chrome,
-      electron: () => process.versions.electron
-    })
+      electron: () => process.versions.electron,
+    });
 
-    contextBridge.exposeInMainWorld('ftp', {
+    contextBridge.exposeInMainWorld("ftp", {
       // getFtpClient:(serverIP) => new FtpFileTransferClient(serverIP),
       // getFtpServer: ()=> new FtpFileTransferServer()
-      createClient:(serverIP)=>ipcRenderer.invoke("ftpClient:createNew",serverIP),
-      getFile:(fileDir,fileName)=>ipcRenderer.invoke('ftpClient:getFile',fileDir,fileName),
-      getFileList:(dir)=>ipcRenderer.invoke('ftpClient:getFileList',dir)
-    })
+      createClient: (serverIP) =>
+        ipcRenderer.invoke("ftpClient:createNew", serverIP),
+      getFile: (fileDir, fileName) =>
+        ipcRenderer.invoke("ftpClient:getFile", fileDir, fileName),
+      getFileList: (dir) => ipcRenderer.invoke("ftpClient:getFileList", dir),
+      changeDirectory: (subDir) => ipcRenderer.invoke("ftpClient:cd", subDir),
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 } else {
-  window.electron = electronAPI
-  window.api = api
+  window.electron = electronAPI;
+  window.api = api;
 }
