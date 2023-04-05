@@ -4,6 +4,7 @@ import * as fs from "fs";
 import jsftp from "jsftp";
 import ftp from "basic-ftp"
 import config from "../common/config.json" assert {type:'json'};
+import net from "net"
 
 
 export class FtpFileTransferClient{
@@ -28,6 +29,20 @@ export class FtpFileTransferClient{
         this.client.ftp.verbose = true
     }
 
+    async cutFile(dir, fileName){
+        const clientSocket = net.createConnection(9000, '127.0.0.1')
+        console.log("cutfile client")
+        clientSocket.write(dir+fileName)
+        clientSocket.on('data', data=>{
+            console.log('服务器返回的数据：',data.toString());
+        })
+        clientSocket.end();
+
+        clientSocket.on('end', () => {
+            console.log('disconnected from TCP server')
+        })
+    }
+
     async getFile(dir,fileName){
         try {
             await this.client.access({
@@ -43,55 +58,6 @@ export class FtpFileTransferClient{
             console.log(err)
         }
         this.client.close()
-        // this.client.get(dir+fileName, (err, stream)=> {
-        //     // if (err) throw err;
-        //     // stream.once('close', function() { c.end(); });
-        //     stream.pipe(fs.createWriteStream(config.ftp.downloadDir+fileName));
-        // });
-        // connect to localhost:21 as anonymous
-        // this.Ftp.raw("PORT","",(err,data)=>{
-        //     this.Ftp.raw("RETR", dir+fileName,(err, data) => {
-        //         if (err) {
-        //             return console.error(err);
-        //         }
-        //         console.log(data.text); // Show the FTP response text to the user
-        //         console.log(data.code); // Show the FTP response code to the user
-        //     });
-        // })
-        // this.Ftp.list(dir, (err, res) => {
-        //     console.log(err)
-        //     console.log(res);
-        //     // Prints something like
-        //     // -rw-r--r--   1 sergi    staff           4 Jun 03 09:32 testfile1.txt
-        //     // -rw-r--r--   1 sergi    staff           4 Jun 03 09:31 testfile2.txt
-        //     // -rw-r--r--   1 sergi    staff           0 May 29 13:05 testfile3.txt
-        //     // ...
-        // });
-        // this.Ftp.get(dir+fileName, config.ftp.downloadDir+fileName, err => {
-        //     console.log(dir+fileName)
-        //     if (err) {
-        //         return console.error(err);
-        //     }
-        //     console.log("File copied successfully!");
-        // });
-    //     let str = ""; // Will store the contents of the file
-    //     this.Ftp.get(dir+fileName, (err, socket) => {
-    //         if (err) {
-    //             return;
-    //         }
-    //
-    //         socket.on("data", d => {
-    //             str += d.toString();
-    //         });
-    //
-    //         socket.on("close", err => {
-    //             if (err) {
-    //                 console.error("There was an error retrieving the file.");
-    //             }
-    //         });
-    //
-    //         socket.resume();
-    //     });
     }
 
     // end(){

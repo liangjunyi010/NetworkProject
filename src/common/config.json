@@ -1,6 +1,6 @@
 {
     "ftp":{
-        "downloadDir":"./downloaded/",
+        "downloadDir":"../../downloaded/",
         "serverDefaultPort":21,
         "serverDefaultIP":"0.0.0.0"
     }

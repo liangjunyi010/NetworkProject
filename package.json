@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "basic-ftp": "^5.0.2",
+    "formidable": "^2.1.1",
     "ftp": "^0.3.10",
     "ftp-srv": "^4.6.2",
     "jsftp": "^2.1.3",
