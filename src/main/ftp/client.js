@@ -8,12 +8,17 @@ export default class FtpFileTransferClient {
   serverIP;
   serverPort;
   isConnecting;
+  clientSocket;
   constructor(serverIP, serverPort = config.ftp.serverDefaultPort) {
     this.client = new ftp.Client();
     this.client.ftp.verbose = true;
     this.serverPort = serverPort;
     this.serverIP = serverIP;
     this.isConnecting = false;
+    this.clientSocket = net.createConnection(9000, '127.0.0.1')
+    this.clientSocket.on('data', data=>{
+      console.log('服务器返回的数据：',data.toString());
+    })
   }
 
     async connect(username = "anonymous", password = "", secure = false){
@@ -42,15 +47,10 @@ export default class FtpFileTransferClient {
     }
 
     async cutFile(dir, fileName){
-      const clientSocket = net.createConnection(9000, '127.0.0.1')
       console.log("cutfile client")
-      clientSocket.write(dir+fileName)
-      clientSocket.on('data', data=>{
-          console.log('服务器返回的数据：',data.toString());
-      })
-      clientSocket.end();
+      this.clientSocket.write(dir+fileName)
 
-      clientSocket.on('end', () => {
+      this.clientSocket.on('end', () => {
           console.log('disconnected from TCP server')
       })
   }
