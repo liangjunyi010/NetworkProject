@@ -42,27 +42,30 @@ class FtpFileTransferServer {
       console.log('TCP client connected');
 
       //监听客户端数据
-      socket.on('data',data=>{
-          console.log(data.toString());
-          fs.readFile(data.toString(),(err,file_data)=>{
-              // 判断是否读取成功
-              if(err){
-                  return console.log('Read File Failed on TCP server！'+err.message)
-              }
-              console.log('Read File Successfully on TCP server' ) // the content of file is stored in variable: dataStr
-              let Dir = path.join(__dirname,`../log/`);//创建目录
-              fs.mkdirSync(Dir,{
-                  //是否使用递归创建目录
-                  recursive:true
-              })
-              let directory = Dir + data.toString().split('/').pop() + '_header.txt'
-              console.log(file_data)
-              fs.writeFile(directory, file_data, function (err,data) {
-                  console.log('write in file successfully')
-                  console.log(file_data)
-              });
-
+      socket.on('data',async data => {
+        let file_name = data.toString();
+        let absolute_file_name = data.toString().split('/').pop();
+        console.log(data.toString());
+        const BUFFER_SIZE = 5; // 5 Byte
+        const stream = fs.createReadStream(file_name, { highWaterMark: BUFFER_SIZE });
+        let counter = 0;
+        for await (const data of stream) {
+          fs.writeFile("temp/file/"+ absolute_file_name +"_" + counter, data, () => {
+            console.log("split and write file done");
           })
+          counter++;
+        }
+
+        // create header file
+        let Dir = path.join(__dirname, `../log/`);//创建目录
+        fs.mkdirSync(Dir, {
+          //是否使用递归创建目录
+          recursive: true
+        })
+        let header_file_content = '';
+        fs.writeFile("temp/header/" + absolute_file_name + "_header", header_file_content, function(err, data) {
+          console.log('write in file successfully')
+        });
       })
 
   })
