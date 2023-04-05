@@ -3,5 +3,10 @@
     "downloadDir": "./downloaded/",
     "serverDefaultPort": 21,
     "serverDefaultIP": "0.0.0.0"
+  },
+  "sftp": {
+    "downloadDir": "./downloaded/",
+    "serverDefaultPort": 22,
+    "serverDefaultIP": "0.0.0.0"
   }
 }

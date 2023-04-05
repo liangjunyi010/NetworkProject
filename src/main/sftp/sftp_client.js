@@ -6,13 +6,13 @@ export default class SftpFileTransferClient {
     serverPort;
     isConnecting;
     constructor(serverIP, serverPort = config.sftp.serverDefaultPort) {
-      this.client = new sftp_Client();
+      this.client = new sftp_client();
       this.serverPort = serverPort;
       this.serverIP = serverIP;
       this.isConnecting = false;
     }
 
-    async connect(username = "anonymous", password = "123456", secure = false){
+    async connect(username = "anonymous", password = "123456"){
         if (!this.client || this.client.closed) {
             if (!this.isConnecting) {
               this.isConnecting = true;
@@ -30,21 +30,6 @@ export default class SftpFileTransferClient {
         }
     }
 
-    
-    async downloadFile(dir, fileName) {
-        await this.connect();
-        console.log("requested dir: " + dir);
-        console.log("requested fileName: " + fileName);
-        try {
-        await this.client.get(
-            dir + fileName,
-            config.sftp.downloadDir + fileName
-        );
-        } catch (err) {
-            console.error(err.message);
-        }
-    }   
-
     async uploadFile(localDir, localFileName, remoteDir){
         await this.connect();
         data = fs.createReadStream(localDir+localFileName);
@@ -55,4 +40,17 @@ export default class SftpFileTransferClient {
             console.error(err.message);
         }
     }
+    // async downloadFile(dir, fileName) {
+    //     await this.connect();
+    //     console.log("requested dir: " + dir);
+    //     console.log("requested fileName: " + fileName);
+    //     try {
+    //     await this.client.fastget(
+    //         dir + fileName,
+    //         config.sftp.downloadDir + fileName
+    //     );
+    //     } catch (err) {
+    //         console.error(err.message);
+    //     }
+    // }       
 }
