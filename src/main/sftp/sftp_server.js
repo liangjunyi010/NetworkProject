@@ -15,7 +15,7 @@ class SftpFileTransferServer {
         if (auth.method !== 'password' || auth.username !== "anonymous" || auth.password !== "123456") {
             return auth.reject(['password'],false);
         }
-        console.warn("Authentication failed");
+        console.warn("Authentication passed");
 
         return auth.accept(function(session) {
             session.on("readfile", function(path, writestream) {

@@ -5,42 +5,34 @@ class SftpFileTransferClient {
     client;
     serverIP;
     serverPort;
-    isConnecting;
-    constructor(serverIP, serverPort = config.sftp.serverDefaultPort) {
-      this.client = new sftp_client();
-      this.serverPort = serverPort;
-      this.serverIP = serverIP;
-      this.isConnecting = false;
+    username;
+    password;
+    constructor(serverIP, serverPort = config.sftp.serverDefaultPort,username="anonymous",password="123456") {
+        this.client = new sftp_client();
+        this.serverPort = serverPort;
+        this.serverIP = serverIP;
+        this.username = username;
+        this.password = password;
     }
 
-    async connect(username = "anonymous", password = "123456"){
-        if (!this.client || this.client.closed) {
-            if (!this.isConnecting) {
-              this.isConnecting = true;
-              await this.client.connect({
-                host: this.serverIP,
-                port: this.serverPort,
-                username: username,
-                password: password,
-              });
-              this.isConnecting = false;
-            } else {
-              await new Promise((resolve) => setTimeout(resolve, 100));
-              await this.connect();
-            }
-        }
-    }
-
-    async uploadFile(localDir, localFileName, remoteDir){
-        await this.connect();
+    uploadFile(localDir, localFileName, remoteDir){       
         let data = fs.createReadStream(localDir+localFileName);
-        try {
-          await this.client.put(data,remoteDir);
-          this.client.end();
-        } catch (err) {
-            console.error(err.message);
-        }
+        this.client.connect({
+            host: this.serverIP,
+            port: this.serverPort,
+            username: this.username,
+            password: this.password
+          }).then(() => {
+              return this.client.put(data, remoteDir);
+            })
+            .then(() => {
+              return this.client.end();
+            })
+            .catch(err => {
+              console.error(err.message);
+        });
     }
+
     // async downloadFile(dir, fileName) {
     //     await this.connect();
     //     console.log("requested dir: " + dir);
