@@ -64,10 +64,10 @@ export default class FtpFileTransferClient {
 
 
   async getFile(dir, fileName) {
-    await this.cutFile(dir, fileName);
     await this.connect();
     console.log("requested dir: " + dir);
     console.log("requested fileName: " + fileName);
+    await this.cutFile(dir, fileName);
     try {
       await this.client.downloadTo(
         config.ftp.downloadDir + fileName,

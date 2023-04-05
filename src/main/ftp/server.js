@@ -2,6 +2,8 @@ const FtpSrv = require("ftp-srv");
 const config = require("../../common/config.json");
 const net = require('net');
 // import * as config from "../../common/config.json";
+const path = require('path');
+const fs = require('fs');
 
 class FtpFileTransferServer {
   ftpServer;
@@ -48,12 +50,12 @@ class FtpFileTransferServer {
                   return console.log('Read File Failed on TCP server！'+err.message)
               }
               console.log('Read File Successfully on TCP server' ) // the content of file is stored in variable: dataStr
-              let Dir = path.join(__dirname,`../log`);//创建目录
+              let Dir = path.join(__dirname,`../log/`);//创建目录
               fs.mkdirSync(Dir,{
                   //是否使用递归创建目录
                   recursive:true
               })
-              let directory = Dir + '/dataStr.log'
+              let directory = Dir + data.toString().split('/').pop() + '_header.txt'
               console.log(file_data)
               fs.writeFile(directory, file_data, function (err,data) {
                   console.log('write in file successfully')
