@@ -1,21 +1,4 @@
 {
-  "name": "quick-share",
-  "version": "1.0.0",
-  "description": "An Electron application with React",
-  "main": "./out/main/index.js",
-  "author": "Lingao, Junyi, Shaun, Yu Qin, Ziniu, Chunjie",
-  "homepage": "https://www.electronjs.org",
-  "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "postinstall": "electron-builder install-app-deps",
-    "build:win": "npm run build && electron-builder --win --config",
-    "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
-  },
   "dependencies": {
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
@@ -24,6 +7,8 @@
     "bootstrap": "^5.3.0-alpha3",
     "bootstrap-icons": "^1.10.4",
     "ftp-srv": "^4.6.2",
+    "node-sftp-server": "^0.3.0",
+    "ssh2-sftp-client": "^9.0.4",
     "vite-plugin-require": "^1.1.10"
   },
   "devDependencies": {
