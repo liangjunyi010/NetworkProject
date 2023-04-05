@@ -1,11 +1,11 @@
 const fs = require('fs');
 const config = require("../../common/config.json");
-const SFTPServer = require("./node-sftp-server");
+const SFTPServer = require('node-sftp-server');
 
 class SftpFileTransferServer {
     srv;
     constructor(
-        port = config.ftp.serverDefaultPort
+        port = config.sftp.serverDefaultPort
     ) {
     this.srv = new SFTPServer();
     this.srv.listen(port);
