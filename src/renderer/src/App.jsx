@@ -7,16 +7,29 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       serverIP: "",
-      downloadCounter:0
+      downloadCounter:0,
+      localIP:'',
+      firstConnected:false
     };
+  }
+  componentDidMount(){
+    this.getLocalIP()
+  }
+  
+  getLocalIP = async ()=>{
+    let ip = await local.getLocalIP()
+    this.setState(()=>{return {localIP:ip}},()=>console.log(this.state.localIP))
   }
 
   connectServer = async (newServerIP) => {
     try {
       ftp.createClient(newServerIP).then(() => {
+        if (!this.state.firstConnected){
+          this.setState(()=>{return {firstConnected:true}},()=>{})
+        }
         this.setState(() => {
           return { serverIP: newServerIP };
-        });
+        },()=>console.log("current serverip:"+this.state.serverIP));
       });
     } catch (err) {
       console.log(err);
@@ -30,11 +43,12 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="container mt-5">
-        <h2 className="text-center mb-4">Server Connection</h2>
+        <h4 className="text-center mb-4">Local IP: {this.state.localIP}</h4>
+        <h2 className="mb-4">Server Connection</h2>
         <ConnectionInput connectServer={this.connectServer} />
         <div className="row">
-          
-            <FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>
+            {this.state.firstConnected && (<FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>)}
+            
   
           <div className="col-2"></div>
           

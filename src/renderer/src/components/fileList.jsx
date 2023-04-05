@@ -4,25 +4,23 @@ import { useState, useEffect } from "react";
 
 export const FileList = (props) => {
   const [files, setFiles] = useState([]);
-  const [currentDirectory, setCurrentDirectory] = useState("./");
+  const [currentDirectory, setCurrentDirectory] = useState("");
   useEffect(resetDirectory,[props.serverIP]) //reset dir when server ip change (new connection)
   useEffect(updateFileList, [currentDirectory]);
   function updateFileList() {
-    // if (props.serverIP){
-      ftp
-        .getFileList(currentDirectory)
-        .then((result) => {
-          console.log("filelist result: ");
-          console.log(result);
-          setFiles(result);
-        })
-        .catch((err) => console.log(err));
-    // }
+    ftp
+      .getFileList(currentDirectory)
+      .then((result) => {
+        console.log("filelist result: ");
+        console.log(result);
+        setFiles(result);
+      })
+      .catch((err) => console.log(err));
+    
   }
  
   function resetDirectory(){
     setCurrentDirectory("./")
-    
   }
 
   const updateCurrentDirectory = (subdir) => {
