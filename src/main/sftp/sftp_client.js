@@ -1,6 +1,7 @@
 const sftp_client = require('ssh2-sftp-client');
+const config = require("../../common/config.json");
 var fs = require('fs');
-export default class SftpFileTransferClient {
+class SftpFileTransferClient {
     client;
     serverIP;
     serverPort;
@@ -32,7 +33,7 @@ export default class SftpFileTransferClient {
 
     async uploadFile(localDir, localFileName, remoteDir){
         await this.connect();
-        data = fs.createReadStream(localDir+localFileName);
+        let data = fs.createReadStream(localDir+localFileName);
         try {
           await this.client.put(data,remoteDir);
           this.client.end();
@@ -54,3 +55,4 @@ export default class SftpFileTransferClient {
     //     }
     // }       
 }
+module.exports =SftpFileTransferClient
