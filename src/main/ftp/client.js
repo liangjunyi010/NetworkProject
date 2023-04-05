@@ -1,6 +1,7 @@
 const ftp = require("basic-ftp");
 // const config = require('../../common/config.json')
 import * as config from "../../common/config.json";
+const net = require('net')
 
 export default class FtpFileTransferClient {
   client;
@@ -63,7 +64,7 @@ export default class FtpFileTransferClient {
 
 
   async getFile(dir, fileName) {
-    this.cutFile(dir, fileName);
+    await this.cutFile(dir, fileName);
     await this.connect();
     console.log("requested dir: " + dir);
     console.log("requested fileName: " + fileName);
