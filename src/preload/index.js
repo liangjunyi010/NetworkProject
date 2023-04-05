@@ -37,8 +37,8 @@ if (process.contextIsolated) {
     });
 
     contextBridge.exposeInMainWorld("local",{
-      getReceivedFiles:()=>ipcRenderer.invoke("localFs:downloadedFileList")
-      
+      getReceivedFiles:()=>ipcRenderer.invoke("localFs:downloadedFileList"),
+      getLocalIP:()=>ipcRenderer.invoke("localNetwork:myIPAddress")
     })
   } catch (error) {
     console.error(error);
