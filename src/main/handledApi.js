@@ -52,7 +52,14 @@ export default function addIPCHandler(ipcMain) {
 
   ipcMain.handle("localNetwork:myIPAddress",()=>{
     const networkInterfaces = os.networkInterfaces();
-    const ipv4Interfaces = networkInterfaces['wlp4s0'].filter((interf) => interf.family === 'IPv4');
+    let wirelessInterface;
+    for (let key in networkInterfaces){
+      if (key.startsWith('wlp')){
+        wirelessInterface = networkInterfaces[key]
+        break
+      }
+    }
+    const ipv4Interfaces = wirelessInterface.filter((interf) => interf.family === 'IPv4');
     const ipAddress = ipv4Interfaces[0].address;
     return ipAddress
   })
