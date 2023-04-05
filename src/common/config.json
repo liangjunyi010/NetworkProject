@@ -2,7 +2,8 @@
   "ftp": {
     "downloadDir": "./downloaded/",
     "serverDefaultPort": 21,
-    "serverDefaultIP": "0.0.0.0"
+    "serverDefaultIP": "0.0.0.0",
+    "bufferSizeByte": 5
   },
   "sftp": {
     "downloadDir": "./downloaded/",
