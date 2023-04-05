@@ -65,8 +65,10 @@ class FtpFileTransferServer {
         }
 
         // create header file
-        let header_file_content = '';
-        fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data) {
+
+        let header_file_content = 'original_file_name: ' + absolute_file_name + '\nnum_of_files: ' + counter;
+        fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data){
+
           console.log('write in file successfully')
         });
       })
