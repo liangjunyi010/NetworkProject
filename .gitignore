@@ -5,6 +5,7 @@ out
 .idea
 downloaded
 !downloaded/.gitkeep
-temp
+temp/file
+temp/header
 !temp/file/.gitkeep
 !temp/header/.gitkeep
