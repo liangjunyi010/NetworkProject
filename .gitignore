@@ -5,3 +5,6 @@ out
 .idea
 downloaded
 !downloaded/.gitkeep
+temp
+!temp/file/file_placeholder
+!temp/header/header_placeholder
