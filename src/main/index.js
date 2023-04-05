@@ -1,13 +1,16 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
+import { app, shell, BrowserWindow, ipcMain, clipboard } from "electron";
 import { join } from "path";
 const fs = require("fs");
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import addIPCHandler from "./handledApi";
-import * as config from "../common/config.json";
+const { spawn } = require("child_process");
+import UDPTransfer from "./directUDP/UDPTransfer";
+
+let mainWindow; //global reference for udpagent to access it
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     show: false,
@@ -59,8 +62,31 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  addIPCHandler(ipcMain);
+  let udpAgent = new UDPTransfer(mainWindow);
+  setClipboardListener(udpAgent);
+  addIPCHandler(ipcMain, udpAgent);
 });
+
+function setClipboardListener(udpAgent) {
+  import("clipboardy")
+    .then((module) => {
+      let clipboard = module.default;
+      let previousClipboardContent = clipboard.readSync();
+
+      setInterval(() => {
+        clipboard.read().then((currentClipboardContent) => {
+          if (currentClipboardContent !== previousClipboardContent) {
+            console.log(
+              `Clipboard content changed: ${currentClipboardContent}`
+            );
+            previousClipboardContent = currentClipboardContent;
+            udpAgent.sendCopiedContent(currentClipboardContent);
+          }
+        });
+      }, 1000);
+    })
+    .catch((err) => console.log(err));
+}
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -80,3 +106,16 @@ app.on("window-all-closed", () => {
 
 // import FtpFileTransferServer from "./ftp/server";
 // let server = new FtpFileTransferServer();
+
+// //run ftp server process
+// // Define the command to run the Node script as root
+// const command = 'sudo';
+// const args = ['node', './src'];
+
+// // Spawn a new process with the command and arguments
+// const child = spawn(command, args, { stdio: 'inherit' });
+
+// // Listen for the exit event to know when the process has finished
+// child.on('exit', (code) => {
+//   console.log(`Child process exited with code ${code}`);
+// });

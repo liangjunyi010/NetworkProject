@@ -3,5 +3,9 @@
     "downloadDir": "./downloaded/",
     "serverDefaultPort": 21,
     "serverDefaultIP": "0.0.0.0"
+  },
+  "udp": {
+    "port": 12345,
+    "maxMessage": 20
   }
 }
