@@ -54,7 +54,7 @@ class FtpFileTransferServer {
         })
         let absolute_file_name = data.toString().split('/').pop();
         console.log(data.toString());
-        const BUFFER_SIZE = 5; // 5 Byte
+        const BUFFER_SIZE = config.ftp.bufferSizeByte;
         const stream = fs.createReadStream(file_name, { highWaterMark: BUFFER_SIZE });
         let counter = 0;
         for await (const data of stream) {
