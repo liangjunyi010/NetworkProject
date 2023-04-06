@@ -1,7 +1,7 @@
 const ftp = require("basic-ftp");
 // const config = require('../../common/config.json')
 import * as config from "../../common/config.json";
-const net = require('net')
+const net = require("net");
 
 export default class FtpFileTransferClient {
   client;
@@ -21,30 +21,29 @@ export default class FtpFileTransferClient {
     })
   }
 
-    async connect(username = "anonymous", password = "", secure = false){
-        if (!this.client || this.client.closed){
-            if (!this.isConnecting){
-                this.isConnecting = true
-                await this.client.access({
-                    host: this.serverIP,
-                    user: username,
-                    password: password,
-                    secure: false
-                })
-                this.isConnecting = false
-                
-            }else{
-                await new Promise(resolve => setTimeout(resolve,100))
-                await this.connect()
-            }
-            // await this.client.access({
-            //     host: this.serverIP,
-            //     user: username,
-            //     password: password,
-            //     secure: false
-            // })
-        }
+  async connect(username = "anonymous", password = "", secure = false) {
+    if (!this.client || this.client.closed) {
+      if (!this.isConnecting) {
+        this.isConnecting = true;
+        await this.client.access({
+          host: this.serverIP,
+          user: username,
+          password: password,
+          secure: false,
+        });
+        this.isConnecting = false;
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        await this.connect();
+      }
+      // await this.client.access({
+      //     host: this.serverIP,
+      //     user: username,
+      //     password: password,
+      //     secure: false
+      // })
     }
+  }
 
     async cutFile(dir, fileName){
       console.log("cutfile client")
@@ -55,13 +54,12 @@ export default class FtpFileTransferClient {
       })
   }
 
-    async getFileList(dir){
-        await this.connect()
-        let result = await this.client.list(dir);
-        console.log(JSON.stringify(result));
-        return result
-    }
-
+  async getFileList(dir) {
+    await this.connect();
+    let result = await this.client.list(dir);
+    console.log(JSON.stringify(result));
+    return result;
+  }
 
   async getFile(dir, fileName) {
     await this.connect();
@@ -78,29 +76,29 @@ export default class FtpFileTransferClient {
     }
   }
 
-    logError(err){
-        console.log("logging error")
-        console.error(err)
-        this.client.close()
-    }
+  logError(err) {
+    console.log("logging error");
+    console.error(err);
+    this.client.close();
+  }
 
-    async putFile(localDir, localFileName, remoteDir){
-        await this.connect()
-        try {
-            await this.client.uploadFrom(
-                localDir + localFileName,
-                remoteDir+localFileName,
-                {}
-            );
-        } catch (err) {
-            this.logError(err);
-        }
+  async putFile(localDir, localFileName, remoteDir) {
+    await this.connect();
+    try {
+      await this.client.uploadFrom(
+        localDir + localFileName,
+        remoteDir + localFileName,
+        {}
+      );
+    } catch (err) {
+      this.logError(err);
     }
+  }
 
-    end(){
-        console.log("closing connection")
-        this.client.close()
-    }
+  end() {
+    console.log("closing connection");
+    this.client.close();
+  }
 }
 
-module.exports = FtpFileTransferClient
+module.exports = FtpFileTransferClient;

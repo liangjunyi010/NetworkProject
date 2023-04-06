@@ -2,43 +2,79 @@ import React from "react";
 import { ConnectionInput } from "./components/connectionInput";
 import { FileList } from "./components/fileList";
 import { ReceivedFileList } from "./components/receivedFileList";
+import { ReceivedCopiedDataList } from "./components/receivedCopiedDataList";
+import * as config from "../../common/config.json";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       serverIP: "",
-      downloadCounter:0,
-      localIP:'',
-      firstConnected:false
+      downloadCounter: 0,
+      localIP: "",
+      firstConnected: false,
+      copiedDataQueue: [],
     };
   }
-  componentDidMount(){
-    this.getLocalIP()
+  componentDidMount() {
+    this.getLocalIP();
+    window.udp.onReceiveData((_event, data) => {
+      this.setState(
+        () => {
+          let newQ = this.state.copiedDataQueue.concat(data);
+          while (newQ.length > config.udp.maxMessage) {
+            newQ.shift();
+          }
+          return { copiedDataQueue: newQ };
+        },
+        () => {
+          console.log(this.state.copiedDataQueue);
+        }
+      );
+    });
   }
-  
-  getLocalIP = async ()=>{
-    let ip = await local.getLocalIP()
-    this.setState(()=>{return {localIP:ip}},()=>console.log(this.state.localIP))
-  }
+
+  getLocalIP = async () => {
+    let ip = await local.getLocalIP();
+    this.setState(
+      () => {
+        return { localIP: ip };
+      },
+      () => console.log(this.state.localIP)
+    );
+  };
 
   connectServer = async (newServerIP) => {
     try {
+      udp.setUdpDest(newServerIP);
       ftp.createClient(newServerIP).then(() => {
-        if (!this.state.firstConnected){
-          this.setState(()=>{return {firstConnected:true}},()=>{})
+        if (!this.state.firstConnected) {
+          this.setState(
+            () => {
+              return { firstConnected: true };
+            },
+            () => {}
+          );
         }
-        this.setState(() => {
-          return { serverIP: newServerIP };
-        },()=>console.log("current serverip:"+this.state.serverIP));
+        this.setState(
+          () => {
+            return { serverIP: newServerIP };
+          },
+          () => console.log("current serverip:" + this.state.serverIP)
+        );
       });
     } catch (err) {
       console.log(err);
     }
   };
 
-  informDownload = ()=>{
-    this.setState(()=>{return {downloadCounter:this.state.downloadCounter+1}},()=>console.log(this.state.downloadCounter))
-  }
+  informDownload = () => {
+    this.setState(
+      () => {
+        return { downloadCounter: this.state.downloadCounter + 1 };
+      },
+      () => console.log(this.state.downloadCounter)
+    );
+  };
 
   render() {
     return (
@@ -47,13 +83,18 @@ export default class App extends React.Component {
         <h2 className="mb-4">Server Connection</h2>
         <ConnectionInput connectServer={this.connectServer} />
         <div className="row">
-            {this.state.firstConnected && (<FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>)}
-            
-  
+          {this.state.firstConnected && (
+            <FileList
+              serverIP={this.state.serverIP}
+              informDownload={this.informDownload}
+            />
+          )}
+
           <div className="col-2"></div>
-          
-            <ReceivedFileList downloadCounter={this.state.downloadCounter}/>
+
+          <ReceivedFileList downloadCounter={this.state.downloadCounter} />
         </div>
+        <ReceivedCopiedDataList dataQueue={this.state.copiedDataQueue} />
       </div>
     );
   }
