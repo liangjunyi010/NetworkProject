@@ -11,6 +11,8 @@ class SftpFileTransferServer {
     this.srv.listen(port);
 
     this.srv.on("connect", function(auth, info) {
+        // ssh_host_rsa_key needs to be in working drive OR
+        // using ssh cli to import private key, which saves in [WINDOWS HOME DIR]/.ssh/id_rsa or /etc/ssh
         console.warn("authentication attempted, client info is: "+JSON.stringify(info)+", auth method is: "+auth.method);
         if (auth.method !== 'password' || auth.username !== "anonymous" || auth.password !== "123456") {
             return auth.reject(['password'],false);
