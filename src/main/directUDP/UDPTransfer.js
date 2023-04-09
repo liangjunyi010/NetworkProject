@@ -46,7 +46,7 @@ export default class UDPTransfer {
   }
 
   sendCopiedContent(copiedContent) {
-    this.send(copiedContent + "[END]", this.port, this.destIP);
+    this.send(copiedContent, this.port, this.destIP);
   }
 
   //   receive(port, address, callback) {

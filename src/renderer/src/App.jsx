@@ -17,7 +17,10 @@ export default class App extends React.Component {
   }
   componentDidMount() {
     this.getLocalIP();
+
+    //set handler for received udp data
     window.udp.onReceiveData((_event, data) => {
+      
       this.setState(
         () => {
           let newQ = this.state.copiedDataQueue.concat(data);
@@ -80,9 +83,11 @@ export default class App extends React.Component {
     return (
       <div className="container mt-5">
         <h4 className="text-center mb-4">Local IP: {this.state.localIP}</h4>
-        <h2 className="mb-4">Server Connection</h2>
         <ConnectionInput connectServer={this.connectServer} />
+        <br />
         <div className="row">
+          <ReceivedFileList downloadCounter={this.state.downloadCounter} />
+          <div className="col-1"></div>
           {this.state.firstConnected && (
             <FileList
               serverIP={this.state.serverIP}
@@ -90,10 +95,8 @@ export default class App extends React.Component {
             />
           )}
 
-          <div className="col-2"></div>
-
-          <ReceivedFileList downloadCounter={this.state.downloadCounter} />
         </div>
+        <br />
         <ReceivedCopiedDataList dataQueue={this.state.copiedDataQueue} />
       </div>
     );

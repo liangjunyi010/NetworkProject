@@ -10,7 +10,7 @@ export const ConnectionInput = (props) => {
     <div className="row mb-3">
       <div className="col-4">
         <label htmlFor={"server-ip"} className="form-label">
-          Server IP:{" "}
+          Destination IP:{" "}
         </label>
         <input
           type="text"

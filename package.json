@@ -25,6 +25,7 @@
     "bootstrap-icons": "^1.10.4",
     "clipboardy": "^3.0.0",
     "ftp-srv": "^4.6.2",
+    "react-bootstrap": "^2.7.2",
     "vite-plugin-require": "^1.1.10"
   },
   "devDependencies": {

@@ -21,7 +21,8 @@ export const ReceivedFileList = (props) => {
   return (
     <div className="col-5">
       <h3 className="mb-3">Received Files</h3>
-      <ul className="list-group">
+      <br />
+      <ul className="list-group limited-height">
         {files.map((fileName) => (
           <li
             className="list-group-item d-flex align-items-center"

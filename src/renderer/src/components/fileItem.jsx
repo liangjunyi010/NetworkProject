@@ -11,9 +11,8 @@ export const FileItem = (props) => {
   };
   return (
     <li
-      className="list-group-item d-flex align-items-center"
+      className="list-group-item d-flex align-items-center clickable"
       onClick={onClickHandler}
-      style={{ cursor: "pointer" }}
     >
       {props.type === 1 ? (
         <i className="bi bi-file-earmark me-2"></i>
