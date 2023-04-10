@@ -59,18 +59,13 @@ class FtpFileTransferServer {
         let counter = 0;
         for await (const data of stream) {
           fs.writeFile("temps/file/"+ file_name + "/" + absolute_file_name +"_part_" + counter, data, () => {
-            console.log("split and write file done");
+            // console.log("split and write file done");
           })
           counter++;
         }
 
         // create header file
-
-        let header_file_content = {
-          "original_file_name" : absolute_file_name,
-          "path" : file_name,
-          "num_of_files" : counter
-        }
+        let header_file_content = {"original_file_name" : absolute_file_name,"path" : file_name,"num_of_files" : counter}
         socket.write(JSON.stringify(header_file_content));
         // fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data){
           
