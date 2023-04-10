@@ -29,7 +29,7 @@ export const ReceivedCopiedDataList = (props) => {
         </Toast>
       </ToastContainer>
       <ul className="list-unstyled">
-        {props.dataQueue.reverse().map((data) => {
+        {props.dataQueue.slice().reverse().map((data) => {
           let decodedText = utf8decoder.decode(data);
           return (
             <li className="mb-2" key={data}>
