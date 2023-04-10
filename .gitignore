@@ -5,3 +5,5 @@ out
 .idea
 downloaded
 !downloaded/.gitkeep
+temps
+client_temp

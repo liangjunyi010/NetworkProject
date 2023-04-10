@@ -1,9 +1,9 @@
 const FtpSrv = require("ftp-srv");
 const config = require("../../common/config.json");
-const net = require("net");
+const net = require('net');
 // import * as config from "../../common/config.json";
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
 class FtpFileTransferServer {
   ftpServer;
@@ -37,52 +37,47 @@ class FtpFileTransferServer {
     });
 
     // tcp server to receive filname and cut
-    const server = net.createServer(); //客户端有人连接的时候触发
-    server.on("connection", (socket) => {
-      //当前链接的socket对象
-      console.log("TCP client connected");
+  const server = net.createServer()//客户端有人连接的时候触发
+  server.on('connection',(socket)=>{//当前链接的socket对象
+      console.log('TCP client connected');
 
       //监听客户端数据
-      socket.on("data", async (data) => {
+      socket.on('data',async data => {
         let file_name = data.toString();
-        let absolute_file_name = data.toString().split("/").pop();
+        fs.mkdirSync("temps/file/" + file_name, {
+          //是否使用递归创建目录
+          recursive: true
+        })
+        fs.mkdirSync("temps/header/" + file_name, {
+          //是否使用递归创建目录
+          recursive: true
+        })
+        let absolute_file_name = data.toString().split('/').pop();
         console.log(data.toString());
-        const BUFFER_SIZE = 5; // 5 Byte
-        const stream = fs.createReadStream(file_name, {
-          highWaterMark: BUFFER_SIZE,
-        });
+        const BUFFER_SIZE = config.ftp.bufferSizeByte;
+        const stream = fs.createReadStream(file_name, { highWaterMark: BUFFER_SIZE });
         let counter = 0;
         for await (const data of stream) {
-          fs.writeFile(
-            "temp/file/" + absolute_file_name + "_" + counter,
-            data,
-            () => {
-              console.log("split and write file done");
-            }
-          );
+          fs.writeFile("temps/file/"+ file_name + "/" + absolute_file_name +"_part_" + counter, data, () => {
+            // console.log("split and write file done");
+          })
           counter++;
         }
 
         // create header file
-        let Dir = path.join(__dirname, `../log/`); //创建目录
-        fs.mkdirSync(Dir, {
-          //是否使用递归创建目录
-          recursive: true,
-        });
-        let header_file_content = "";
-        fs.writeFile(
-          "temp/header/" + absolute_file_name + "_header",
-          header_file_content,
-          function (err, data) {
-            console.log("write in file successfully");
-          }
-        );
-      });
-    });
+        let header_file_content = {"original_file_name" : absolute_file_name,"path" : file_name,"num_of_files" : counter}
+        socket.write(JSON.stringify(header_file_content));
+        // fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data){
+          
+        //   console.log('write in file successfully')
+        // });
+      })
 
-    server.listen(9000, "127.0.0.1");
+  })
+
+  server.listen(9000,'127.0.0.1')
   }
-
+  
   shutDown() {
     this.ftpServer.close();
   }
