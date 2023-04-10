@@ -27,6 +27,7 @@
     "ftp-srv": "^4.6.2",
     "ssh2-sftp-client": "^9.0.4",
     "node-sftp-server": "^0.3.0",
+    "react-bootstrap": "^2.7.2",
     "vite-plugin-require": "^1.1.10"
   },
   "devDependencies": {

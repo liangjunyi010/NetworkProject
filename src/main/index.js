@@ -80,7 +80,9 @@ function setClipboardListener(udpAgent) {
               `Clipboard content changed: ${currentClipboardContent}`
             );
             previousClipboardContent = currentClipboardContent;
-            udpAgent.sendCopiedContent(currentClipboardContent);
+            if(currentClipboardContent){ //send only when it's not empty
+              udpAgent.sendCopiedContent(currentClipboardContent);
+            }
           }
         });
       }, 1000);

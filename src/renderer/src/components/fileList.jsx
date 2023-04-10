@@ -36,7 +36,7 @@ export const FileList = (props) => {
     <div className="col-5">
       <h3 className="mb-3">Files and Directories</h3>
       <span>Current Directory: {currentDirectory}</span>
-      <ul className="list-group">
+      <ul className="list-group limited-height">
         {files.map((element) => (
           <FileItem
             fileName={element.name}

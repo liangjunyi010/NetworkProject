@@ -12,6 +12,6 @@
   },
   "udp": {
     "port": 12345,
-    "maxMessage": 20
+    "maxMessage": 10
   }
 }
