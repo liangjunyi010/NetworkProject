@@ -9,11 +9,15 @@ export default class App extends React.Component {
       serverIP: "",
       downloadCounter:0,
       localIP:'',
-      firstConnected:false
+      firstConnected:false,
+      connectionMode:0
     };
   }
   componentDidMount(){
     this.getLocalIP()
+  }
+  connectionModeSetter=(checked)=>{
+    this.setState(()=>({connectionMode:checked}),()=>{console.log(this.state.connectionMode)})
   }
   
   getLocalIP = async ()=>{
@@ -45,7 +49,7 @@ export default class App extends React.Component {
       <div className="container mt-5">
         <h4 className="text-center mb-4">Local IP: {this.state.localIP}</h4>
         <h2 className="mb-4">Server Connection</h2>
-        <ConnectionInput connectServer={this.connectServer} />
+        <ConnectionInput connectServer={this.connectServer} connectionModeSetter = {this.connectionModeSetter}/>
         <div className="row">
             {this.state.firstConnected && (<FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>)}
             

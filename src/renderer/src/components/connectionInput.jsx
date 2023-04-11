@@ -6,6 +6,13 @@ export const ConnectionInput = ( props ) => {
     setServerIP(event.target.value);
   };
 
+  const options = [
+    { value: 0, label: 'FTP' },
+    { value: 1, label: 'SFTP' },
+  ];
+
+  const [selectedOption, setSelectedOption] = useState('');
+
   return (
     <div className="row mb-3">
       <div className="col-4">
@@ -25,6 +32,22 @@ export const ConnectionInput = ( props ) => {
         >
           Connect
         </button>
+      </div>
+      <div className="col-2 d-flex align-items-end">
+        {options.map((option) => (
+        <div key={option.value}>
+          <input
+            type="radio"
+            id={option.value}
+            name="option"
+            value={option.value}
+            onChange={(e) => {props.connectionModeSetter(e.target.value);
+              setSelectedOption(e.target.value)
+            } }
+          />
+          <label htmlFor={option.value}>{option.label}</label>
+        </div>
+        ))}
       </div>
     </div>
   );
