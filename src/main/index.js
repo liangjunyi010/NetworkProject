@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, clipboard } from "electron";
+import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 const fs = require("fs");
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
@@ -76,9 +76,9 @@ function setClipboardListener(udpAgent) {
       setInterval(() => {
         clipboard.read().then((currentClipboardContent) => {
           if (currentClipboardContent !== previousClipboardContent) {
-            console.log(
-              `Clipboard content changed: ${currentClipboardContent}`
-            );
+            // console.log(
+            //   `Clipboard content changed: ${currentClipboardContent}`
+            // );
             previousClipboardContent = currentClipboardContent;
             if(currentClipboardContent){ //send only when it's not empty
               udpAgent.sendCopiedContent(currentClipboardContent);
@@ -112,10 +112,13 @@ app.on("window-all-closed", () => {
 // //run ftp server process
 // // Define the command to run the Node script as root
 // const command = 'sudo';
-// const args = ['node', './src'];
-
+// const args = ['node', './src/'];
+// function startFtpServer (){
+//   const FtpFileTransferServer = require("../src/main/ftp/server");
+//   let server = new FtpFileTransferServer();
+// }
 // // Spawn a new process with the command and arguments
-// const child = spawn(command, args, { stdio: 'inherit' });
+// const child = spawn('sudo', ['node', '-e', `(${startFtpServer.toString()})()`]);
 
 // // Listen for the exit event to know when the process has finished
 // child.on('exit', (code) => {

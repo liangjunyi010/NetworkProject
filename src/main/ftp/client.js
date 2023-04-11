@@ -1,6 +1,8 @@
 const ftp = require("basic-ftp");
+import { resolve } from "path";
 // const config = require('../../common/config.json')
 import * as config from "../../common/config.json";
+import { rejects } from "assert";
 const net = require("net");
 const fs = require('fs');
 
@@ -10,6 +12,8 @@ export default class FtpFileTransferClient {
   serverPort;
   isConnecting;
   clientSocket;
+  taskQueue;
+  isProcessing;
   constructor(serverIP, serverPort = config.ftp.serverDefaultPort) {
     this.client = new ftp.Client();
     this.client.ftp.verbose = true;
@@ -22,6 +26,8 @@ export default class FtpFileTransferClient {
       const logFileGenerator = new LogFileGenerator(JSON.parse(data.toString()));
       logFileGenerator.generateFile();
     })
+    this.isProcessing = false;
+    this.taskQueue=[];
   }
 
   async connect(username = "anonymous", password = "", secure = false) {
@@ -58,10 +64,42 @@ export default class FtpFileTransferClient {
   }
 
   async getFileList(dir) {
-    await this.connect();
-    let result = await this.client.list(dir);
-    console.log(JSON.stringify(result));
-    return result;
+    // add request to queue if another getFileList invocation is in progress
+    if (this.isProcessing) {
+      console.log('Another invocation of getFileList is in progress, adding to queue.');
+      return new Promise((resolve, reject) => {
+        this.taskQueue.push({ dir, resolve, reject });
+      });
+    }
+
+    this.isProcessing = true;
+
+    try {
+      // wait for FTP client to connect if not already connected
+      if (!this.isConnected) {
+        await this.connect();
+      }
+
+      // get file list from server
+      let result = await this.client.list(dir);
+      console.log(JSON.stringify(result));
+      return result;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isProcessing = false;
+
+      // execute next request in queue, if any
+      if (this.taskQueue.length > 0) {
+        let { dir, resolve, reject } = this.taskQueue.shift();
+        try {
+          let result = await this.getFileList(dir);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      }
+    }
   }
 
   async getFile(dir, fileName) {
