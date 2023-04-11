@@ -1,5 +1,6 @@
 const { dialog } = require("electron");
 import FtpFileTransferClient from "./ftp/client";
+import SftpFileTransferClient from "./sftp/sftp_client";
 import * as config from '../common/config.json'
 const fs = require('fs')
 const os = require('os')
@@ -26,6 +27,24 @@ export default function addIPCHandler(ipcMain) {
       ftpClient = new FtpFileTransferClient(serverIP);
     }
     return true;
+  });
+
+  ipcMain.handle("sftpClient:uploadFile",async(event,fileDir, fileName) => {
+    try {
+      await sftpClient.uploadFile(fileDir, fileName);
+      return true;
+    } catch (err) {
+      handleError(err);
+    }
+  });
+
+  ipcMain.handle("sftpClient:downloadFile", async(event,fileDir, fileName) => {
+    try {
+      await sftpClient.downloadFile(fileDir, fileName);
+      return true;
+    } catch (err) {
+      handleError(err);
+    }
   });
 
   // ipcMain.handle("ftpClient:cd",async (event,subDir)=>{
@@ -71,3 +90,4 @@ function handleError(error) {
 }
 
 let ftpClient = new FtpFileTransferClient("");
+let sftpClient = new SftpFileTransferClient("");

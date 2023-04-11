@@ -51,7 +51,7 @@ export default class App extends React.Component {
         <h2 className="mb-4">Server Connection</h2>
         <ConnectionInput connectServer={this.connectServer} connectionModeSetter = {this.connectionModeSetter}/>
         <div className="row">
-            {this.state.firstConnected && (<FileList serverIP={this.state.serverIP} informDownload={this.informDownload}/>)}
+            {this.state.firstConnected && (<FileList serverIP={this.state.serverIP} informDownload={this.informDownload} connectionMode={this.state.connectionMode}/>)}
             
   
           <div className="col-2"></div>

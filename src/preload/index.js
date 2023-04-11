@@ -36,6 +36,15 @@ if (process.contextIsolated) {
       // changeDirectory: (subDir) => ipcRenderer.invoke("ftpClient:cd", subDir),
     });
 
+    contextBridge.exposeInMainWorld("sftp", {
+      uploadFile: (fileDir, fileName) =>
+        ipcRenderer.invoke("sftpClient:uploadFile", fileDir, fileName),
+      downloadFile: (fileDir, fileName) =>{
+        // console.log(fileName);
+        return ipcRenderer.invoke("sftpClient:downloadFile", fileDir, fileName)
+      }
+    });
+
     contextBridge.exposeInMainWorld("local",{
       getReceivedFiles:()=>ipcRenderer.invoke("localFs:downloadedFileList"),
       getLocalIP:()=>ipcRenderer.invoke("localNetwork:myIPAddress")
