@@ -33,18 +33,25 @@ class SftpFileTransferClient {
         });
     }
 
-    // async downloadFile(dir, fileName) {
-    //     await this.connect();
-    //     console.log("requested dir: " + dir);
-    //     console.log("requested fileName: " + fileName);
-    //     try {
-    //     await this.client.fastget(
-    //         dir + fileName,
-    //         config.sftp.downloadDir + fileName
-    //     );
-    //     } catch (err) {
-    //         console.error(err.message);
-    //     }
-    // }       
+    downloadFile(dir, fileName) {
+      let dst = fs.createWriteStream(config.sftp.downloadDir + fileName);
+        this.client.connect({
+            host: this.serverIP,
+            port: this.serverPort,
+            username: this.username,
+            password: this.password
+        }).then(() => {
+          return this.client.get(
+            dir + fileName,
+            dst
+        );
+        })
+        .then(() => {
+          return this.client.end();
+        })
+        .catch(err => {
+          console.error(err.message);
+        });
+    }       
 }
 module.exports =SftpFileTransferClient
