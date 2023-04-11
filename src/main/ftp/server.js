@@ -59,7 +59,7 @@ class FtpFileTransferServer {
         let counter = 0;
         for await (const data of stream) {
           fs.writeFile("temps/file/"+ file_name + "/" + absolute_file_name +"_part_" + counter, data, () => {
-            // console.log("split and write file done");
+            console.log("split and write file done");
           })
           counter++;
         }
