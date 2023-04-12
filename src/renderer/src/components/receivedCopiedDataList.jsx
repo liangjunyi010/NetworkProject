@@ -10,10 +10,8 @@ export const ReceivedCopiedDataList = (props) => {
   const utf8decoder = new TextDecoder();
   const writeToClipboard = (data) => {
     clipboard.write(utf8decoder.decode(data)).then(() => {
-      console.log('setting to true');
       setShowToast(true)
       setTimeout(() => {
-        console.log('setting to false');
         setShowToast(false)
       }, 2000)
     })
@@ -40,7 +38,7 @@ export const ReceivedCopiedDataList = (props) => {
                     <p>{decodedText.length >= 50 ? decodedText.substring(0, 50) + " ......" : decodedText}</p>
                   </div>
                   <div class="flip-card-back">
-                    <i className="bi bi-files clickable" onClick={() => writeToClipboard(data)}></i>
+                    <i className="bi bi-files clickable" style={{fontSize:"2rem"}} onClick={() => writeToClipboard(data)}></i>
                   </div>
                 </div>
               </div>

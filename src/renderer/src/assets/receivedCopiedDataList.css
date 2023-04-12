@@ -84,10 +84,3 @@ ul li{
 .toast-body {
   padding: .5rem;
 }
-
-/* 图标样式 */
-.bi {
-  font-size: 2rem;
-  vertical-align: middle;
-  margin-right: .5rem;
-}
