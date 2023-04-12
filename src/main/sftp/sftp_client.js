@@ -31,7 +31,24 @@ export default class SftpFileTransferClient {
             .catch(err => {
               console.error(err.message);
         });
+        this.isConnecting = false;
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        await this.connect();
+      }
     }
+  }
+
+  async downloadFile(dir, fileName) {
+    await this.connect();
+    console.log("requested dir: " + dir);
+    console.log("requested fileName: " + fileName);
+    try {
+      await this.client.get(dir + fileName, config.sftp.downloadDir + fileName);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
 
     downloadFile(dir, fileName) {
       let dst = fs.createWriteStream(config.sftp.downloadDir + fileName);
@@ -55,4 +72,3 @@ export default class SftpFileTransferClient {
         });
     }       
 }
-module.exports =SftpFileTransferClient

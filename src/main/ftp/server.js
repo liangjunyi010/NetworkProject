@@ -48,10 +48,6 @@ class FtpFileTransferServer {
           //是否使用递归创建目录
           recursive: true
         })
-        fs.mkdirSync("temps/header/" + file_name, {
-          //是否使用递归创建目录
-          recursive: true
-        })
         let absolute_file_name = data.toString().split('/').pop();
         console.log(data.toString());
         const BUFFER_SIZE = config.ftp.bufferSizeByte;
@@ -59,18 +55,17 @@ class FtpFileTransferServer {
         let counter = 0;
         for await (const data of stream) {
           fs.writeFile("temps/file/"+ file_name + "/" + absolute_file_name +"_part_" + counter, data, () => {
-            console.log("split and write file done");
           })
           counter++;
         }
 
         // create header file
-
-        let header_file_content = 'original_file_name: ' + absolute_file_name + '\npath: '+ file_name + '\nnum_of_files: ' + counter;
-        fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data){
-          socket.write(header_file_content);
-          console.log('write in file successfully')
-        });
+        let header_file_content = {"original_file_name" : absolute_file_name,"path" : file_name,"num_of_files" : counter}
+        socket.write(JSON.stringify(header_file_content));
+        // fs.writeFile("temps/header/" + file_name + "/" + absolute_file_name + "_header", header_file_content, function(err, data){
+          
+        //   console.log('write in file successfully')
+        // });
       })
 
   })

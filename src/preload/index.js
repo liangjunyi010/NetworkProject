@@ -31,11 +31,23 @@ if (process.contextIsolated) {
       getFile: (fileDir, fileName) =>
         ipcRenderer.invoke("ftpClient:getFile", fileDir, fileName),
       getFileList: (dir) => {
-        console.log('getting file list');
-        return ipcRenderer.invoke("ftpClient:getFileList", dir)},
+        console.log("getting file list");
+        return ipcRenderer.invoke("ftpClient:getFileList", dir);
+      },
       // changeDirectory: (subDir) => ipcRenderer.invoke("ftpClient:cd", subDir),
     });
 
+    contextBridge.exposeInMainWorld("local", {
+      getReceivedFiles: () => ipcRenderer.invoke("localFs:downloadedFileList"),
+      getLocalIP: () => ipcRenderer.invoke("localNetwork:myIPAddress"),
+    });
+
+    contextBridge.exposeInMainWorld("udp", {
+      // sendCopiedContent:(content,addr)=>ipcRenderer.invoke("udp:sendCopiedContent",content,addr)
+      setUdpDest: (destIP) => ipcRenderer.send("udp:setDestIP", destIP),
+      onReceiveData: (callback) =>
+        ipcRenderer.on("udp:newDataReceived", callback),
+    });
     contextBridge.exposeInMainWorld("sftp", {
       uploadFile: (fileDir, fileName) =>
         ipcRenderer.invoke("sftpClient:uploadFile", fileDir, fileName),
@@ -45,10 +57,6 @@ if (process.contextIsolated) {
       }
     });
 
-    contextBridge.exposeInMainWorld("local",{
-      getReceivedFiles:()=>ipcRenderer.invoke("localFs:downloadedFileList"),
-      getLocalIP:()=>ipcRenderer.invoke("localNetwork:myIPAddress")
-    })
   } catch (error) {
     console.error(error);
   }
