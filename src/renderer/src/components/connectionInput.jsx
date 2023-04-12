@@ -10,9 +10,7 @@ export const ConnectionInput = (props) => {
     { value: 0, label: 'FTP' },
     { value: 1, label: 'SFTP' },
   ];
-
-  const [selectedOption, setSelectedOption] = useState('');
-
+  
   return (
     <div className="row mb-3">
       <div className="col-4">
@@ -40,15 +38,12 @@ export const ConnectionInput = (props) => {
         <div key={option.value}>
           <input
             type="radio"
-            id={option.value}
-            name="option"
+            name="connectionMode"
             value={option.value}
             checked={props.connectionMode===option.value}
-            onChange={(e) => {props.connectionModeSetter(e.target.value);
-              setSelectedOption(e.target.value)
-            } }
+            onChange={() => props.connectionModeSetter(option.value)}
           />
-          <label htmlFor={option.value}>{option.label}</label>
+            <label htmlFor={option.value}>{option.label}</label>
         </div>
         ))}
       </div>
