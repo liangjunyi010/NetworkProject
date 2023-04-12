@@ -1,2 +1,2 @@
-const FtpFileTransferServer = require("../src/main/ftp/server");
+const FtpFileTransferServer = require("./ftp/server");
 let server = new FtpFileTransferServer();

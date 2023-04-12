@@ -1,11 +1,13 @@
-const { dialog } = require("electron");
+const { dialog, shell } = require("electron");
 import FtpFileTransferClient from "./ftp/client";
 import UDPTransfer from "./directUDP/UDPTransfer";
 import SftpFileTransferClient from "./sftp/sftp_client";
 import * as config from '../common/config.json'
+import path from "path";
 const fs = require('fs')
 const os = require('os')
-export default function addIPCHandler(ipcMain) {
+
+export default function addIPCHandler(ipcMain,udpAgent) {
 
   ipcMain.handle("ftpClient:getFile", async (event, fileDir, fileName) => {
     try {
@@ -91,6 +93,17 @@ export default function addIPCHandler(ipcMain) {
   //   udpAgent.sendCopiedContent(content,address)
   //   return true
   // })
+
+  ipcMain.handle("localFs:openFolder",(event, dir,fileName)=>{
+    const pathToOpen = path.resolve(dir + fileName)
+    console.log(pathToOpen);
+    shell.showItemInFolder(pathToOpen)
+  })
+
+  ipcMain.handle("localFs:openFile",(event, dir, fileName)=>{
+    const pathToOpen = path.resolve(dir + fileName) //if simply concat dir+fileName, /downloaded/ will be duplicated causing error
+    shell.openPath(pathToOpen);
+  })
 
   ipcMain.on("udp:setDestIP", (event, ip) => {
     udpAgent.setDest(ip);

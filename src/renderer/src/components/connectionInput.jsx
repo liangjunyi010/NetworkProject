@@ -43,6 +43,7 @@ export const ConnectionInput = (props) => {
             id={option.value}
             name="option"
             value={option.value}
+            checked={props.connectionMode===option.value}
             onChange={(e) => {props.connectionModeSetter(e.target.value);
               setSelectedOption(e.target.value)
             } }

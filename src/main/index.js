@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from "electron";
-import { join } from "path";
+import path, { join } from "path";
 const fs = require("fs");
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
@@ -124,3 +124,19 @@ app.on("window-all-closed", () => {
 // child.on('exit', (code) => {
 //   console.log(`Child process exited with code ${code}`);
 // });
+
+
+const { fork } = require('child_process');
+
+// Run another Node.js script as a child process
+const sftpSvrChildProc = fork('./src/main/startSftpServer.js');
+const ftpSvrChildProc = fork('./src/main/startFtpServer.js')
+
+// Listen for messages from the child process
+sftpSvrChildProc.on('message', (message) => {
+  console.log('Received message from sftp server:', message);
+});
+
+ftpSvrChildProc.on('message', (message) => {
+  console.log('Received message from ftp server:', message);
+});

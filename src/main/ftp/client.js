@@ -40,18 +40,13 @@ export default class FtpFileTransferClient {
           user: username,
           password: password,
           secure: false,
+          port:this.serverPort
         });
         this.isConnecting = false;
       } else {
         await new Promise((resolve) => setTimeout(resolve, 100));
         await this.connect();
       }
-      // await this.client.access({
-      //     host: this.serverIP,
-      //     user: username,
-      //     password: password,
-      //     secure: false
-      // })
     }
   }
 
@@ -122,7 +117,7 @@ export default class FtpFileTransferClient {
         for(let j =0;j<fileNames.length;j++){
           if(fileNames[j]===(fileName+'_log.txt')){
             fs.mkdirSync(config.ftp.downloadDir+"temps/file/" + dir + fileName, {recursive: true});
-            let client_temp_files_folder = new ReadFolder(config.ftp.downloadDir+'temps/file/'+fileName);
+            let client_temp_files_folder = new ReadFolder(config.ftp.downloadDir+'temps/file/'+dir+fileName);
             let log_file_parser = new LogFileParser(config.ftp.downloadDir+'../client_temp/'+fileNames[j]);
             log_file_parser.parseFile();
             client_temp_files_folder.read(async(client_temp_files)=>{

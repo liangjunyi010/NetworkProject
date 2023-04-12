@@ -6,6 +6,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 import FtpFileTransferClient from "../main/ftp/client";
 // const FtpFileTransferServer = require('./ftp/server')
 // import FtpFileTransferServer from "../main/ftp/server";
+import * as config from '../common/config.json'
 
 // Custom APIs for renderer
 const api = {};
@@ -40,6 +41,8 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld("local", {
       getReceivedFiles: () => ipcRenderer.invoke("localFs:downloadedFileList"),
       getLocalIP: () => ipcRenderer.invoke("localNetwork:myIPAddress"),
+      openDownloadFolder:(fileName)=>ipcRenderer.invoke("localFs:openFolder",config.ftp.downloadDir,fileName),
+      openFile:(dir,fileName)=>ipcRenderer.invoke("localFs:openFile",dir,fileName)
     });
 
     contextBridge.exposeInMainWorld("udp", {

@@ -32,12 +32,12 @@ export const ReceivedCopiedDataList = (props) => {
           return (
             <li className="mb-2" key={data}>
 
-              <div class="flip-card">
-                <div class="flip-card-inner">
-                  <div class="flip-card-front">
+              <div className="flip-card">
+                <div className="flip-card-inner">
+                  <div className="flip-card-front">
                     <p>{decodedText.length >= 50 ? decodedText.substring(0, 50) + " ......" : decodedText}</p>
                   </div>
-                  <div class="flip-card-back">
+                  <div className="flip-card-back">
                     <i className="bi bi-files clickable" style={{fontSize:"2rem"}} onClick={() => writeToClipboard(data)}></i>
                   </div>
                 </div>

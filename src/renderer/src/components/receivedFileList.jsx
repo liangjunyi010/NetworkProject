@@ -6,8 +6,6 @@ export const ReceivedFileList = (props) => {
     local
       .getReceivedFiles()
       .then((result) => {
-        console.log("files");
-        console.log(result);
         setFiles(result);
       })
       .catch((err) => console.log(err));
@@ -16,6 +14,8 @@ export const ReceivedFileList = (props) => {
 
   const openFile = (fileName) => {
     //to be implemented
+    // local.openFile(config.ftp.downloadDir,fileName)
+    local.openDownloadFolder(fileName)
   };
 
   return (

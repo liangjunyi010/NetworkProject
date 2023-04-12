@@ -88,7 +88,7 @@ export default class App extends React.Component {
     return (
       <div className="container mt-5">
         <h4 className="text-center mb-4">Local IP: {this.state.localIP}</h4>
-        <ConnectionInput connectServer={this.connectServer} connectionModeSetter = {this.connectionModeSetter}/>
+        <ConnectionInput connectServer={this.connectServer} connectionModeSetter = {this.connectionModeSetter} connectionMode={this.state.connectionMode}/>
         <br />
         <div className="row">
           <ReceivedFileList downloadCounter={this.state.downloadCounter} />
