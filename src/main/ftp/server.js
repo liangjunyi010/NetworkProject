@@ -48,10 +48,6 @@ class FtpFileTransferServer {
           //是否使用递归创建目录
           recursive: true
         })
-        fs.mkdirSync("temps/header/" + file_name, {
-          //是否使用递归创建目录
-          recursive: true
-        })
         let absolute_file_name = data.toString().split('/').pop();
         console.log(data.toString());
         const BUFFER_SIZE = config.ftp.bufferSizeByte;
@@ -59,7 +55,6 @@ class FtpFileTransferServer {
         let counter = 0;
         for await (const data of stream) {
           fs.writeFile("temps/file/"+ file_name + "/" + absolute_file_name +"_part_" + counter, data, () => {
-            console.log("split and write file done");
           })
           counter++;
         }
