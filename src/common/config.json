@@ -1,13 +1,17 @@
 {
   "ftp": {
     "downloadDir": "./downloaded/",
-    "serverDefaultPort": 21,
+    "serverDefaultPort": 10001,
     "serverDefaultIP": "0.0.0.0",
-    "bufferSizeByte": 10000000
+    "bufferSizeByte": 1e6
   },
   "sftp": {
     "downloadDir": "./downloaded/",
-    "serverDefaultPort": 22,
+    "serverDefaultPort": 10002,
     "serverDefaultIP": "0.0.0.0"
+  },
+  "udp": {
+    "port": 12345,
+    "maxMessage": 10
   }
 }

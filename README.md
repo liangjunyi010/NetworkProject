@@ -44,3 +44,9 @@ $ npm run build:linux
 ```bash
 $ sudo node ./test/startFtpServer.js
 ```
+
+### Start SFTP server
+
+```bash
+$ sudo node ./test/startSftpServer.js
+```
