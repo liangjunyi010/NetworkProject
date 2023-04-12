@@ -70,7 +70,7 @@ class FtpFileTransferServer {
 
   })
 
-  server.listen(9000,'127.0.0.1')
+  server.listen(9000)
   }
   
   shutDown() {

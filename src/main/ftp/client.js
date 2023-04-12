@@ -139,7 +139,9 @@ export default class FtpFileTransferClient {
                   for (let i =0;i<client_temp_files.length;i++){
                     await log_file_parser.updateFile(client_temp_files[i]);
                   }
-                  for(let i = log_file_parser.parsedData.totalNumOfFiles- log_file_parser.parsedData.numOfNotFinishedFiles; i < log_file_parser.parsedData.totalNumOfFiles; i++){
+                  let res = log_file_parser.parsedData.totalNumOfFiles- log_file_parser.parsedData.numOfNotFinishedFiles-1;
+                  if (res===-1) res=0;
+                  for(let i = res; i < log_file_parser.parsedData.totalNumOfFiles; i++){
                     let targetFile = fileName+'/'+fileName+'_part_'+i;
                     try {
                       await this.client.downloadTo(
