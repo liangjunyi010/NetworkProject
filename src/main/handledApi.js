@@ -1,10 +1,12 @@
 const { dialog } = require("electron");
 import FtpFileTransferClient from "./ftp/client";
-import * as config from "../common/config.json";
-const fs = require("fs");
-const os = require("os");
 import UDPTransfer from "./directUDP/UDPTransfer";
-export default function addIPCHandler(ipcMain, udpAgent) {
+import SftpFileTransferClient from "./sftp/sftp_client";
+import * as config from '../common/config.json'
+const fs = require('fs')
+const os = require('os')
+export default function addIPCHandler(ipcMain) {
+
   ipcMain.handle("ftpClient:getFile", async (event, fileDir, fileName) => {
     try {
       await ftpClient.getFile(fileDir, fileName);
@@ -27,6 +29,24 @@ export default function addIPCHandler(ipcMain, udpAgent) {
       ftpClient = new FtpFileTransferClient(serverIP);
     }
     return true;
+  });
+
+  ipcMain.handle("sftpClient:uploadFile",async(event,fileDir, fileName) => {
+    try {
+      await sftpClient.uploadFile(fileDir, fileName);
+      return true;
+    } catch (err) {
+      handleError(err);
+    }
+  });
+
+  ipcMain.handle("sftpClient:downloadFile", async(event,fileDir, fileName) => {
+    try {
+      await sftpClient.downloadFile(fileDir, fileName);
+      return true;
+    } catch (err) {
+      handleError(err);
+    }
   });
 
   // ipcMain.handle("ftpClient:cd",async (event,subDir)=>{
@@ -83,3 +103,4 @@ function handleError(error) {
 }
 
 let ftpClient = new FtpFileTransferClient("");
+let sftpClient = new SftpFileTransferClient("");

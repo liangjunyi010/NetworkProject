@@ -13,6 +13,7 @@ export default class App extends React.Component {
       localIP: "",
       firstConnected: false,
       copiedDataQueue: [],
+      connectionMode:0
     };
   }
   componentDidMount() {
@@ -34,6 +35,10 @@ export default class App extends React.Component {
         }
       );
     });
+
+  connectionModeSetter=(checked)=>{
+    this.setState(()=>({connectionMode:checked}),()=>{console.log(this.state.connectionMode)})
+  }
   }
 
   getLocalIP = async () => {
@@ -83,7 +88,7 @@ export default class App extends React.Component {
     return (
       <div className="container mt-5">
         <h4 className="text-center mb-4">Local IP: {this.state.localIP}</h4>
-        <ConnectionInput connectServer={this.connectServer} />
+        <ConnectionInput connectServer={this.connectServer} connectionModeSetter = {this.connectionModeSetter}/>
         <br />
         <div className="row">
           <ReceivedFileList downloadCounter={this.state.downloadCounter} />
@@ -92,9 +97,9 @@ export default class App extends React.Component {
             <FileList
               serverIP={this.state.serverIP}
               informDownload={this.informDownload}
+              connectionMode={this.state.connectionMode}
             />
           )}
-
         </div>
         <br />
         <ReceivedCopiedDataList dataQueue={this.state.copiedDataQueue} />

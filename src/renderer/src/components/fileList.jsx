@@ -45,6 +45,7 @@ export const FileList = (props) => {
             updateCurrentDirectory={updateCurrentDirectory}
             dir={currentDirectory}
             informDownload={props.informDownload}
+            connectionMode={props.connectionMode}
           />
           // type 1 means file, type 2 means folder
         ))}

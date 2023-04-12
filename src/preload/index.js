@@ -48,6 +48,15 @@ if (process.contextIsolated) {
       onReceiveData: (callback) =>
         ipcRenderer.on("udp:newDataReceived", callback),
     });
+    contextBridge.exposeInMainWorld("sftp", {
+      uploadFile: (fileDir, fileName) =>
+        ipcRenderer.invoke("sftpClient:uploadFile", fileDir, fileName),
+      downloadFile: (fileDir, fileName) =>{
+        // console.log(fileName);
+        return ipcRenderer.invoke("sftpClient:downloadFile", fileDir, fileName)
+      }
+    });
+
   } catch (error) {
     console.error(error);
   }

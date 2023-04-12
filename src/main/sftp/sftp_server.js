@@ -32,11 +32,11 @@ class SftpFileTransferServer {
         });
 
     this.srv.on("error", function() {
-    return console.warn("Example server encountered an error");
+    return console.warn("Server encountered an error");
     });
 
     this.srv.on("end", function() {
-    return console.warn("Example says user disconnected");
+    return console.warn("User disconnected");
     });
     }
 
