@@ -36,9 +36,9 @@ export default class App extends React.Component {
       );
     });
 
+  }
   connectionModeSetter=(checked)=>{
     this.setState(()=>({connectionMode:checked}),()=>{console.log(this.state.connectionMode)})
-  }
   }
 
   getLocalIP = async () => {
