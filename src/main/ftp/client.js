@@ -98,16 +98,21 @@ export default class FtpFileTransferClient {
   }
 
   async getFile(dir, fileName) {
-        await this.connect();
+    await this.connect();
     console.log("requested dir: " + dir);
     console.log("requested fileName: " + fileName);
     await this.cutFile(dir, fileName);
-    this.clientSocket.on('data', async data=>{
-      console.log('Header Info',data.toString());
-      const logFileGenerator = new LogFileGenerator(JSON.parse(data.toString()));
-      await logFileGenerator.generateFile();
-      this.getFileHelper(dir, fileName)
-    })
+
+    // Return a promise that resolves when getFileHelper is resolved
+    return new Promise((resolve, reject) => {
+      this.clientSocket.on('data', async data => {
+        console.log('Header Info', data.toString());
+        const logFileGenerator = new LogFileGenerator(JSON.parse(data.toString()));
+        await logFileGenerator.generateFile();
+        const result = await this.getFileHelper(dir, fileName);
+        resolve(result); // resolve the promise with the result
+      })
+    });
   }
 
   async getFileHelper(dir, fileName) {
