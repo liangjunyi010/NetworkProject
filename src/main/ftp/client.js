@@ -22,42 +22,42 @@ export default class FtpFileTransferClient {
     this.serverIP = serverIP;
     this.isConnecting = false;
     this.isProcessing = false;
-    this.taskQueue=[];
+    this.taskQueue = [];
   }
 
   async connect(username = "anonymous", password = "", secure = false) {
     if (!this.clientSocket || !this.clientSocket.writable) {
       this.clientSocket = net.createConnection(9000, this.serverIP);
-      this.clientSocket.on('data', data=>{
-        console.log('服务器返回的数据：',data.toString());
+      this.clientSocket.on('data', data => {
+        console.log('服务器返回的数据：', data.toString());
         const logFileGenerator = new LogFileGenerator(JSON.parse(data.toString()));
         logFileGenerator.generateFile();
       });
 
-    if (!this.client || this.client.closed) {
-      if (!this.isConnecting) {
-        this.isConnecting = true;
-        await this.client.access({
-          host: this.serverIP,
-          user: username,
-          password: password,
-          secure: false,
-          port:this.serverPort
-        });
-        this.isConnecting = false;
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        await this.connect();
+      if (!this.client || this.client.closed) {
+        if (!this.isConnecting) {
+          this.isConnecting = true;
+          await this.client.access({
+            host: this.serverIP,
+            user: username,
+            password: password,
+            secure: false,
+            port: this.serverPort
+          });
+          this.isConnecting = false;
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          await this.connect();
+        }
       }
-    }
     }
   }
 
-  async cutFile(dir, fileName){
+  async cutFile(dir, fileName) {
     console.log("cutfile client")
-    this.clientSocket.write(dir+fileName)
+    this.clientSocket.write(dir + fileName)
     this.clientSocket.on('end', () => {
-        console.log('disconnected from TCP server')
+      console.log('disconnected from TCP server')
     })
   }
 
@@ -119,48 +119,55 @@ export default class FtpFileTransferClient {
   }
 
   async getFileHelper(dir, fileName) {
-    let client_temp_folder = new ReadFolder(config.ftp.downloadDir+'../client_temp');
-    client_temp_folder.read(async (fileNames) => {
-      if (fileNames.length!=0){
-        for(let j =0;j<fileNames.length;j++){
-          if(fileNames[j]===(fileName+'_log.txt')){
-            if (dir==="./"){
-              fs.mkdirSync(config.ftp.downloadDir+"temps/file/" + fileName, {recursive: true});
-            } else{
-              fs.mkdirSync(config.ftp.downloadDir+"temps/file/" + dir + fileName, {recursive: true});
-            }
-            let client_temp_files_folder = new ReadFolder(config.ftp.downloadDir+'temps/file/'+dir+fileName);
-            let log_file_parser = new LogFileParser(config.ftp.downloadDir+'../client_temp/'+fileNames[j]);
-            log_file_parser.parseFile();
-            client_temp_files_folder.read(async(client_temp_files)=>{
-              console.log(client_temp_files)
-              for (let i =0;i<client_temp_files.length;i++){
-                await log_file_parser.updateFile(client_temp_files[i]);
-              }
-              for(let i = log_file_parser.parsedData.totalNumOfFiles- log_file_parser.parsedData.numOfNotFinishedFiles; i < log_file_parser.parsedData.totalNumOfFiles; i++){
-                let targetFile = fileName+'/'+fileName+'_part_'+i;
-                try {
-                  await this.client.downloadTo(
-                    config.ftp.downloadDir + "temps/file/"+ dir + fileName+'/'+fileName+'_part_'+i,
-                    'temps/file/' + dir + targetFile
-                  );
-                } catch (err) {
-                  this.logError(err);
+    return new Promise((resolve, reject)=>{
+      try{
+        let client_temp_folder = new ReadFolder(config.ftp.downloadDir+'../client_temp');
+        client_temp_folder.read(async (fileNames) => {
+          if (fileNames.length!=0){
+            for(let j =0;j<fileNames.length;j++){
+              if(fileNames[j]===(fileName+'_log.txt')){
+                if (dir==="./"){
+                  fs.mkdirSync(config.ftp.downloadDir+"temps/file/" + fileName, {recursive: true});
+                } else{
+                  fs.mkdirSync(config.ftp.downloadDir+"temps/file/" + dir + fileName, {recursive: true});
                 }
+                let client_temp_files_folder = new ReadFolder(config.ftp.downloadDir+'temps/file/'+dir+fileName);
+                let log_file_parser = new LogFileParser(config.ftp.downloadDir+'../client_temp/'+fileNames[j]);
+                log_file_parser.parseFile();
+                client_temp_files_folder.read(async(client_temp_files)=>{
+                  console.log(client_temp_files)
+                  for (let i =0;i<client_temp_files.length;i++){
+                    await log_file_parser.updateFile(client_temp_files[i]);
+                  }
+                  for(let i = log_file_parser.parsedData.totalNumOfFiles- log_file_parser.parsedData.numOfNotFinishedFiles; i < log_file_parser.parsedData.totalNumOfFiles; i++){
+                    let targetFile = fileName+'/'+fileName+'_part_'+i;
+                    try {
+                      await this.client.downloadTo(
+                        config.ftp.downloadDir + "temps/file/"+ dir + fileName+'/'+fileName+'_part_'+i,
+                        'temps/file/' + dir + targetFile
+                      );
+                    } catch (err) {
+                      this.logError(err);
+                    }
+                  }
+                  let inputPath = config.ftp.downloadDir+"temps/file/"+ dir + fileName+'/';
+                  let filesObject = log_file_parser.parsedData.notFinishedFiles;
+                  let outputFileName = fileName;
+                  let outputPath = config.ftp.downloadDir;
+                  let mergeFiles = new MergeSplitFiles(inputPath, filesObject, outputFileName, outputPath, dir);
+                  await mergeFiles.streamMergeMain();
+                  fs.unlinkSync('./client_temp/'+fileName+'_log.txt');
+                  resolve("download finished")
+                })
               }
-              let inputPath = config.ftp.downloadDir+"temps/file/"+ dir + fileName+'/';
-              let filesObject = log_file_parser.parsedData.notFinishedFiles;
-              let outputFileName = fileName;
-              let outputPath = config.ftp.downloadDir;
-              let mergeFiles = new MergeSplitFiles(inputPath, filesObject, outputFileName, outputPath, dir);
-              await mergeFiles.streamMergeMain();
-              fs.unlinkSync('./client_temp/'+fileName+'_log.txt');
-            })
+            }
           }
         }
+        );
+      }catch (err){
+        reject(err);
       }
-    }
-    );
+    })
   }
 
   logError(err) {
@@ -202,13 +209,13 @@ class LogFileGenerator {
       for (let i = 0; i < this.input.num_of_files; i++) {
         content += `\n${this.input.original_file_name}_part_${i} : not_finished`;
       }
-  
+
       const dirName = "client_temp";
       if (!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName);
       }
       const filePath = `./client_temp/${fileName}`;
-  
+
       fs.writeFile(filePath, content, (err) => {
         if (err) {
           console.error(err);
@@ -235,7 +242,7 @@ class LogFileParser {
       const lines = this.fileData.split('\n');
       this.parsedData = {
         originFileName: lines[0].split(' : ')[1],
-        path:lines[1].split(' : ')[1],
+        path: lines[1].split(' : ')[1],
         totalNumOfFiles: parseInt(lines[2].split(' : ')[1]),
         numOfNotFinishedFiles: parseInt(lines[3].split(' : ')[1]),
         notFinishedFiles: {}
@@ -259,12 +266,12 @@ class LogFileParser {
       if (this.parsedData && this.parsedData.notFinishedFiles[keyToUpdate] !== undefined) {
         this.parsedData.notFinishedFiles[keyToUpdate] = false;
         this.parsedData.numOfNotFinishedFiles--;
-  
+
         const updatedContent = `origin_file_name : ${this.parsedData.originFileName}\n` +
           `total_num_of_files : ${this.parsedData.totalNumOfFiles}\n` +
           `num_of_not_finished_files : ${this.parsedData.numOfNotFinishedFiles}\n` +
           Object.entries(this.parsedData.notFinishedFiles).map(([key, value]) => `${key} : ${value ? 'not_finished' : 'finished'}`).join('\n');
-  
+
         fs.writeFile(this.filePath, updatedContent, 'utf-8', (err) => {
           if (err) {
             console.error(`Failed to update key '${keyToUpdate}' to 'finished' in the file '${this.filePath}'.`);
@@ -321,7 +328,7 @@ class MergeSplitFiles {
           resolve();
           return;
         }
-  
+
         const data = fileList.shift();
         const { filePath: chunkFilePath } = data;
         const currentReadStream = fs.createReadStream(chunkFilePath);
@@ -332,10 +339,10 @@ class MergeSplitFiles {
         currentReadStream.on('end', () => {
           mergeNextFile();
         });
-  
+
         currentReadStream.pipe(fileWriteStream, { end: false });
       }
-  
+
       mergeNextFile();
     });
   }
@@ -347,12 +354,13 @@ class MergeSplitFiles {
       name,
       filePath: path.resolve(chunkFilesDir, name),
     }));
-    const fileWriteStream = fs.createWriteStream(path.resolve(this.outputPath+this.outputFileName));
+    const fileWriteStream = fs.createWriteStream(path.resolve(this.outputPath + this.outputFileName));
     await this.streamMergeRecursive(fileList, fileWriteStream);
-    this.deleteFolderRecursive(config.ftp.downloadDir+"temps/file/"+ this.dir + this.outputFileName+'/')
+    await this.deleteFolderRecursive(config.ftp.downloadDir + "temps/file/" + this.dir + this.outputFileName + '/')
+    return true;
   }
 
-  deleteFolderRecursive(folderPath) {
+  async deleteFolderRecursive(folderPath) {
     if (fs.existsSync(folderPath)) {
       fs.readdirSync(folderPath).forEach((file, index) => {
         const curPath = path.join(folderPath, file);
@@ -367,6 +375,7 @@ class MergeSplitFiles {
       // 删除空目录
       fs.rmdirSync(folderPath);
     }
+    return true;
   }
 }
 
